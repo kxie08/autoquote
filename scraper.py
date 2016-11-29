@@ -17,17 +17,11 @@ def main():
     driver.get("https://sales2.geico.com/internetsales/iSnapPreQuote.xhtml?execution=e1s1&pg=iSnapCustomer")
 
     # Page 1: Customer
-    firstname = driver.find_element_by_name("CustomerForm:firstName")
-    firstname.send_keys("Joe")
-    firstname.send_keys(Keys.RETURN)
+    driver.find_element_by_name("CustomerForm:firstName").send_keys("Joe")
 
-    lastname = driver.find_element_by_name("CustomerForm:lastName")
-    lastname.send_keys("Smith")
-    lastname.send_keys(Keys.RETURN)
+    driver.find_element_by_name("CustomerForm:lastName").send_keys("Smith")
 
-    address = driver.find_element_by_name("CustomerForm:customerMailingAddress")
-    address.send_keys("58 Plympton St Cambridge MA")
-    address.send_keys(Keys.RETURN)
+    driver.find_element_by_name("CustomerForm:customerMailingAddress").send_keys("58 Plympton St Cambridge MA")
 
     zipcode = driver.find_element_by_name("CustomerForm:mailingZip")
     zipcode.send_keys("02138")
@@ -90,20 +84,39 @@ def main():
     selection("DriverForm:employmentStatus", "MilitaryStatus", "15")
     driver.find_element_by_id("DriverForm:addNo").click()
 
-    # Page 4
+    # Page 4: Incident Reports
     driver.find_element_by_id("DriHisForm:select:0").click()
     driver.find_element_by_id("DriHisForm:continueBtn").click()
 
     selection("DriverHistory2Form:incidentType","IncidentType","ACC2")
     driver.find_element_by_id("DriverHistory2Form:atFault:1").click()
+    driver.find_element_by_id("DriverHistory2Form:incidentDate").click()
     selection("DriverHistory2Form:incidentDate","IncidentDate","05/01/2012")
 
     driver.find_element_by_id("DriverHistory2Form:pipPayoutInd:1").click()
-
     driver.find_element_by_id("DriverHistory2Form:continueBtn").click()
 
     # No more incidents to report
     driver.find_element_by_id("DriverHistory2Form:continueBtn").click()
+
+    # Page 5: Current Insurance Information
+
+    selection("CurrentInsuranceForm:yearsWithInsComp", "CurrentInsuranceYears", "3")
+    selection("CurrentInsuranceForm:currentBodilyInjury", "OBDcoverage", "038")
+
+    driver.find_element_by_id("CurrentInsuranceForm:continueBtn").click()
+
+    # Page 6: Discounts
+
+    driver.find_element_by_id("DiscountsForm:boatCrossSellSelect:1").click()
+
+    driver.find_element_by_id("DiscountsForm:emailAddress").click()
+    driver.find_element_by_id("DiscountsForm:emailAddress").send_keys("cs50.autoquote@gmail.com")
+    driver.find_element_by_id("DiscountsForm:emailAddress").send_keys(Keys.RETURN)
+
+    driver.find_element_by_id("DiscountsForm:continueBtn").click()
+
+
 
 def selection(formid, name, key):
     element = driver.find_element_by_id(formid)
