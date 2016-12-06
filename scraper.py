@@ -6,16 +6,18 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 def main():
     # Define path for chromedriver executable
-    chromedriver = "C:\Users\Kevin Xie\PycharmProjects\quotes\chromedriver\chromedriver.exe"
-    os.environ["webdriver.chrome.driver"] = chromedriver
+    webdriver.chrome.driver = "C:\Users\Kevin Xie\PycharmProjects\quotes\chromedriver.exe"
 
     # Inititalize driver
     global driver
-    driver = webdriver.Chrome(chromedriver)
+    driver = webdriver.Remote(
+        command_executor="http://localhost:4444/wd/hub",
+        desired_capabilities=DesiredCapabilities.CHROME)
 
     # Geico scrape
     driver.get("https://sales2.geico.com/internetsales/iSnapPreQuote.xhtml?execution=e1s1&pg=iSnapCustomer")
@@ -24,11 +26,17 @@ def main():
     driver.find_element_by_name("CustomerForm:firstName").send_keys("Joe")
     driver.find_element_by_name("CustomerForm:lastName").send_keys("Smith")
     driver.find_element_by_name("CustomerForm:customerMailingAddress").send_keys("58 Plympton St Cambridge MA")
+    # if apartment_number != "":
+    #   driver.find_element_by_name("CustomerForm:unitNumber").send_keys(apt_num)
     driver.find_element_by_name("CustomerForm:mailingZip").send_keys("02138")
     driver.find_element_by_name("CustomerForm:birthMonth").send_keys("06")
     driver.find_element_by_name("CustomerForm:birthDay").send_keys("06")
     driver.find_element_by_name("CustomerForm:birthYear").send_keys("1990")
 
+    # if numberofdrivers > 1 or numberofvehicles > 1 or married:
+    #   driver.find_element_by_id("CustomerForm:fqUnmarriedDriver:1").click()
+
+    # else:
     driver.find_element_by_id("CustomerForm:fqUnmarriedDriver:0").click()
 
     driver.find_element_by_id("CustomerForm:continueBtn").click()
@@ -38,19 +46,19 @@ def main():
         driver.find_element_by_id("ProactiveCustomerIdentityForm:forgotPassword").click()
 
     # Page 2: Vehicles
-
     # to do: create struct of vehicles, vehicle_counts
-
     # for i in vehicles:
 
     selection("VehicleForm:yearRowTR", "Year", "2009")
     selection("VehicleForm:make", "Make", "ACURA")
     selection("VehicleForm:model", "Model", "MDX AWD")
 
+    # if vehicleyear > 2014:
+    #    selection("VehicleForm:odometerReading", "odometerReading", "500")
+
     # to do: some cars have a 'body style' form option
 
     driver.find_element_by_id("VehicleForm:numberOwners:0").click()
-
     driver.find_element_by_id("VehicleForm:ownership").click()
 
     # if ownershipstatus == "owned":
@@ -59,15 +67,14 @@ def main():
     # elif ownershipstatus == "financed":
     #   selection("VehicleForm:ownership", "Ownership", "F")
 
-    #elif ownershipstatus == "leased":
+    # elif ownershipstatus == "leased":
     #   selection("VehicleForm:ownership", "Ownership", "L")
 
     # if vehicleusage == "commute":
     selection("VehicleForm:otherBusiness", "Use", "C")
     selection("VehicleForm:daysDriven", "DaysDriven", "5")
     driver.find_element_by_id("VehicleForm:milesDriven").send_keys("20")
-
-    # selection("VehicleForm:estimatedMileage", "Mileage", "10000")
+    selection("VehicleForm:estimatedMileage", "Mileage", "10000")
 
     # elif vehicleusage == "pleasure":
     #   selection("VehicleForm:otherBusiness", "Use", "P")
@@ -90,8 +97,13 @@ def main():
     #       thousandmiles = str(int(mileage/1000))
     #       selection("VehicleForm:estimatedMileage", "Mileage", thousandmiles)
 
+    # if finalvehicle:
     driver.find_element_by_id("VehicleForm:addNo").click()
-    driver.find_element_by_id("VehicleForm:addNo").click()
+
+    # else:
+    #   driver.find_element_by_id("VehicleForm:addYes").click()
+
+    # driver.find_element_by_id("VehicleForm:addNo").click()
 
     # Page 3
 
@@ -114,11 +126,6 @@ def main():
     # if fulltimestudent:
     driver.find_element_by_id("DriverForm:fulltimeStudent:0").click()
 
-    #   if age >= cutoff: (check for this cutoff)
-    #       selection("DriverForm:highestEduLevel", "EduLevel", EduValue)
-    #       selection("DriverForm:employmentStatus", "Employment", EmploymentValue)
-    #       question: do we want to include military options? could make things more complicated
-
     #   else:
     driver.find_element_by_id("DriverForm:yearMovedInYear").send_keys("2008")
     driver.find_element_by_id("DriverForm:yearMovedInYear").send_keys(Keys.RETURN)
@@ -127,6 +134,9 @@ def main():
     selection("DriverForm:employmentStatus", "MilitaryStatus", "15")
 
     driver.find_element_by_id("DriverForm:addNo").click()
+
+    # in case of multiple vehicles
+    # selection("UsageForm:UsageForm_tableMatchDriver_0_vehicleDropDown", "primaryVehicle", vehiclenumber)
 
     # Page 4: Incident Reports
 
@@ -146,7 +156,7 @@ def main():
     #    selection("DriverHistory2Form:convictionDescription", "ViolationType", violationtype)
     #    selection("DriverHistory2Form:DriverHistory2Form:incidentDate", "ViolationDate", violationdaterange)
 
-    selection("DriverHistory2Form:incidentDate","IncidentDate","05/01/2012")
+    selection("DriverHistory2Form:incidentDate","IncidentDate","06/01/2012")
 
     driver.find_element_by_id("DriverHistory2Form:continueBtn").click()
 
@@ -165,7 +175,7 @@ def main():
     driver.find_element_by_id("CurrentInsuranceForm:continueBtn").click()
 
     # Page 6: Discounts
-
+    # check if watercraft options are always present?
     driver.find_element_by_id("DiscountsForm:boatCrossSellSelect:1").click()
 
     driver.find_element_by_id("DiscountsForm:emailAddress").click()
@@ -209,6 +219,16 @@ def main():
     print("Medical payments are {}".format(med))
     print("Uninsured motorist coverage is {}".format(uninsured_cov))
     print("Underinsured motorist coverage is {}".format(underinsured_cov))
+
+    return {
+        "monthlypayment": payment,
+        "optionalliability": optional_bi,
+        "propertyliability": pdi,
+        "personalinjury": pip,
+        "medicalpayments": med,
+        "uninsuredcov": uninsured_cov,
+        "underinsuredcov": underinsured_cov
+    }
 
 def selection(formid, name, key):
     try:
